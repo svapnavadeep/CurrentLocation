@@ -161,8 +161,9 @@ class LocationHelperActivity : AppCompatActivity() {
     }
 
     private fun getLocationAddress(context: Context, location: Location) {
-        var country:String ?= ""
-        var state:String ?= ""
+        var country: String? = ""
+        var state: String? = ""
+        var fullAddress: String = ""
         object : AsyncTask<Location, String, LocationData>() {
             @SuppressLint("StaticFieldLeak")
             override fun doInBackground(vararg params: Location?): LocationData {
@@ -174,8 +175,9 @@ class LocationHelperActivity : AppCompatActivity() {
                         location.longitude,
                         1
                     )
-                    state = addresses[0].locality?:""
+                    state = addresses[0].locality ?: ""
                     country = addresses[0].countryName
+                    fullAddress = addresses[0].getAddressLine(0)
 
                     if (country == null) {
                         country = getCountryPhoneCode(context)
@@ -185,9 +187,13 @@ class LocationHelperActivity : AppCompatActivity() {
                     val countryName = getCountryPhoneCode(context)
                     country = countryName
                     state = ""
-                    Log.d("CountryPhoneCode", "Exception ${exception.message}"   )
+                    Log.d("CountryPhoneCode", "Exception ${exception.message}")
                 }
-                return LocationData(location, country = country?:"", state = state?:"")
+                return LocationData(
+                    location, country = country ?: "",
+                    state = state ?: "",
+                    fullAddress = fullAddress
+                )
             }
 
             override fun onPostExecute(result: LocationData?) {
@@ -195,10 +201,12 @@ class LocationHelperActivity : AppCompatActivity() {
                 setLocation(
                     LocationData(
                         location = location,
-                        country = country?:"", state = state?:""
+                        country = country ?: "",
+                        state = state ?: "",
+                        fullAddress = fullAddress
                     ), true
                 )
-                Log.d("CountryPhoneCode", "onPostExecute $country $state"   )
+                Log.d("CountryPhoneCode", "onPostExecute $country $state")
 
             }
         }.execute(location)
