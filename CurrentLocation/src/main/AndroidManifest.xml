@@ -9,7 +9,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application>
-        <activity android:name=".ui.location.LocationHelperActivity" />
+        <activity android:name=".ui.location.LocationHelperActivity"
+            android:theme="@style/TransparentTheme"/>
+        <activity android:name=".ui.permission.PermissionActivity"
+            android:theme="@style/TransparentTheme"/>
     </application>
 
 </manifest>
