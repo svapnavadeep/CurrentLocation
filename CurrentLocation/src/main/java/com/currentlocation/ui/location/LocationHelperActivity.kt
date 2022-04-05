@@ -21,6 +21,7 @@ import com.currentlocation.R
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.currentlocation.ui.location.model.LocationData
+import kotlinx.coroutines.*
 import java.text.DateFormat
 import java.util.*
 
@@ -48,7 +49,6 @@ class LocationHelperActivity : AppCompatActivity() {
                 mCurrentLocation = locationResult.lastLocation
                 mLastUpdateTime = DateFormat.getTimeInstance().format(Date())
                 Log.d(mTAG, "onLocationResult $locationResult")
-
                 updateLocationUI()
             }
         }
@@ -115,20 +115,20 @@ class LocationHelperActivity : AppCompatActivity() {
 
             return
         }
-        mFusedLocationClient?.requestLocationUpdates(
-            mLocationRequest!!,
-            mLocationCallback,
-            Looper.getMainLooper()
-        )
+        mLocationRequest?.let { locRequest->
+            mLocationCallback?.let { callback->
+                mFusedLocationClient?.requestLocationUpdates(
+                    locRequest,
+                    callback,
+                    Looper.getMainLooper()
+                )
+            }
+        }
     }
 
     private fun stopLocationUpdates() {
         Log.d(mTAG, "stopLocationUpdates")
-
-        mFusedLocationClient
-            ?.removeLocationUpdates(mLocationCallback)
-            ?.addOnCompleteListener(this) { task ->
-            }
+        mLocationCallback?.let { mFusedLocationClient?.removeLocationUpdates(it) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -164,52 +164,40 @@ class LocationHelperActivity : AppCompatActivity() {
         var country: String? = ""
         var state: String? = ""
         var fullAddress: String = ""
-        object : AsyncTask<Location, String, LocationData>() {
-            @SuppressLint("StaticFieldLeak")
-            override fun doInBackground(vararg params: Location?): LocationData {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
                 val geoCoder = Geocoder(context, Locale.US)
-                val addresses: List<Address>
-                try {
-                    addresses = geoCoder.getFromLocation(
-                        location.latitude,
-                        location.longitude,
-                        1
-                    )
-                    state = addresses[0].locality ?: ""
-                    country = addresses[0].countryName
-                    fullAddress = addresses[0].getAddressLine(0)
-
-                    if (country == null) {
-                        country = getCountryPhoneCode(context)
-                    }
-
-                } catch (exception: Exception) {
-                    val countryName = getCountryPhoneCode(context)
-                    country = countryName
-                    state = ""
-                    Log.d("CountryPhoneCode", "Exception ${exception.message}")
+                val addresses: List<Address> = geoCoder.getFromLocation(
+                    location.latitude,
+                    location.longitude,
+                    1
+                )
+                state = addresses[0].locality ?: ""
+                fullAddress = addresses[0].getAddressLine(0)
+                country =  if (addresses[0].countryName == null) {
+                    getCountryPhoneCode(context)
+                }else{
+                    addresses[0].countryName
                 }
-                return LocationData(
-                    location, country = country ?: "",
-                    state = state ?: "",
-                    fullAddress = fullAddress
-                )
+            } catch (exception: Exception) {
+                val countryName = getCountryPhoneCode(context)
+                country = countryName
+                state = ""
+                Log.d("CountryPhoneCode", "Exception ${exception.message}")
+            }finally {
+                withContext(Dispatchers.Main){
+                    setLocation(
+                        LocationData(
+                            location = location,
+                            country = country ?: "",
+                            state = state ?: "",
+                            fullAddress = fullAddress
+                        ), true
+                    )
+                }
             }
-
-            override fun onPostExecute(result: LocationData?) {
-                super.onPostExecute(result)
-                setLocation(
-                    LocationData(
-                        location = location,
-                        country = country ?: "",
-                        state = state ?: "",
-                        fullAddress = fullAddress
-                    ), true
-                )
-                Log.d("CountryPhoneCode", "onPostExecute $country $state")
-
-            }
-        }.execute(location)
+        }
     }
 
     private fun setLocation(
