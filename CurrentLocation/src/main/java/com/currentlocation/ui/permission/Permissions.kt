@@ -86,6 +86,7 @@ class Permissions {
                 " not to ask again! Please provide them from settings."
         var sendBlockedToSettings = true
         var createNewTask = false
+        var layoutId:Int=0
 
         /**
          * Sets the button text for "settings" while asking user to go to settings.
@@ -158,6 +159,10 @@ class Permissions {
         fun sendDontAskAgainToSettings(send: Boolean): Options {
             sendBlockedToSettings = send
             return this
+        }
+
+        fun setSettingLayout(layout:Int){
+            layoutId = layout
         }
     }
 }

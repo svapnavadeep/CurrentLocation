@@ -9,7 +9,9 @@ class PermissionHelper(private val mActivity: Activity) {
 
     val mTAG = "checkPermissions"
 
-    fun checkPermissions(permissions: Array<String>, success: (isAllow: Boolean) -> Unit = {}) {
+    fun checkPermissions(permissions: Array<String>,
+                         options: Permissions.Options?=null,
+                         success: (isAllow: Boolean) -> Unit = {}) {
         val permissionHandler = object : PermissionCallback() {
             override fun onGranted() {
                 Log.d(mTAG, "permissionHandler onGranted")
@@ -37,7 +39,7 @@ class PermissionHelper(private val mActivity: Activity) {
             mActivity,
             permissions,
             null,
-            null,
+            options,
             permissionHandler
         )
 
