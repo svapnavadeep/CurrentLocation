@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CurrentLocatonLib</string>
+    <string name="follow_the_steps_to_enable_location_access">Follow the steps to enable location access</string>
+    <string name="location_on_description">To continue on this app, we need to ensure that you’re not from a restricted state.</string>
+    <string name="allow_location_title">Allow location permission</string>
 </resources>

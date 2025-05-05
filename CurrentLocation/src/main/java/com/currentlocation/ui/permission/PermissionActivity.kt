@@ -10,8 +10,10 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.currentlocation.R
+import com.currentlocation.ui.permission.bottom.BottomSheetAlertCLDialog
 import java.util.*
 
 @TargetApi(Build.VERSION_CODES.M)
@@ -134,12 +136,7 @@ class PermissionActivity : AppCompatActivity() {
                     }
                 }
                 if (justBlockedList.size > 0) { //checked don't ask again for at least one.
-                    val permissionHandler = permissionHandler
-                    finish()
-                    permissionHandler?.onJustBlocked(
-                        applicationContext, justBlockedList,
-                        deniedPermissions
-                    )
+                   deny()
                 } else if (justDeniedList.size > 0) { //clicked deny for at least one.
                     deny()
                 } else { //unavailable permissions were already set not to ask again.
@@ -156,8 +153,8 @@ class PermissionActivity : AppCompatActivity() {
     }
 
     private fun sendToSettings() {
-        if (!options!!.sendBlockedToSettings) {
-            deny()
+        if((options?.layoutId?:0) != 0){
+            showCustomDialog()
             return
         }
         AlertDialog.Builder(this).setTitle(options!!.settingsDialogTitle)
@@ -208,9 +205,42 @@ class PermissionActivity : AppCompatActivity() {
     }
 
     private fun deny() {
+        Log.d("showCustomDialog", "idenyd  "+options?.layoutId)
+
+        if((options?.layoutId?:0) != 0){
+            showCustomDialog()
+        }else{
+            val permissionHandler = permissionHandler
+            finish()
+            permissionHandler?.onDenied(applicationContext, deniedPermissions)
+        }
+
+    }
+    private fun onPermissionDeny() {
         val permissionHandler = permissionHandler
         finish()
         permissionHandler?.onDenied(applicationContext, deniedPermissions)
+    }
+
+    private var mLocationDialog: BottomSheetAlertCLDialog?=null
+
+    private fun showCustomDialog() {
+        if (mLocationDialog==null)
+            Log.d("showCustomDialog", "id  "+options?.layoutId)
+            mLocationDialog=BottomSheetAlertCLDialog(this,
+                options?.layoutId?:0,
+                positiveBtnId = options?.dialogPositiveBtn?:0,
+                negativeBtnId = options?.dialogNegativeBtn?:0,
+                onPositiveClick =  {
+                    val intent = Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", packageName, null)
+                    )
+                    startActivityForResult(intent, RC_SETTINGS)
+                }, onNegativeClick = {
+                    onPermissionDeny()
+                })
+        if (mLocationDialog?.isShowing==false) mLocationDialog?.show()
     }
 
     private fun grant() {

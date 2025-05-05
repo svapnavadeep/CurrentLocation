@@ -87,6 +87,8 @@ class Permissions {
         var sendBlockedToSettings = true
         var createNewTask = false
         var layoutId:Int=0
+        var dialogPositiveBtn:Int=0
+        var dialogNegativeBtn:Int=0
 
         /**
          * Sets the button text for "settings" while asking user to go to settings.
@@ -163,6 +165,14 @@ class Permissions {
 
         fun setSettingLayout(layout:Int){
             layoutId = layout
+        }
+
+        fun setDialogPositiveBtnId(btn:Int){
+            dialogPositiveBtn = btn
+        }
+
+        fun setDialogNegativeBtnId(btn:Int){
+            dialogNegativeBtn = btn
         }
     }
 }

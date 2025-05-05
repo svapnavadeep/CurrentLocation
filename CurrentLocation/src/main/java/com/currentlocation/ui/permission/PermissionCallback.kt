@@ -21,7 +21,7 @@ abstract class PermissionCallback {
         deniedPermissions: ArrayList<String>
     ) {
 
-        Toast.makeText(context, "Permission Denied.", Toast.LENGTH_SHORT).show()
+        /*Toast.makeText(context, "Permission Denied.", Toast.LENGTH_SHORT).show()*/
     }
 
     /**
