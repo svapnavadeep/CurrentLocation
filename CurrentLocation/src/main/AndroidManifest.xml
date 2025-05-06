@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.currentlocation">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application>
-        <activity android:name=".ui.location.LocationHelperActivity"
+        <activity android:name="com.currentlocation.ui.location.LocationHelperActivity"
+           android:exported="false"
             android:theme="@style/TransparentTheme"/>
-        <activity android:name=".ui.permission.PermissionActivity"
+        <activity android:name="com.currentlocation.ui.permission.PermissionActivity"
+            android:exported="false"
             android:theme="@style/TransparentTheme"/>
     </application>
 

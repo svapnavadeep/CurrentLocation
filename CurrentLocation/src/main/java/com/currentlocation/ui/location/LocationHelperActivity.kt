@@ -17,10 +17,10 @@ import android.os.Looper
 import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.currentlocation.R
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.currentlocation.ui.location.model.LocationData
+import com.currentlocaton.R
 import kotlinx.coroutines.*
 import java.text.DateFormat
 import java.util.*
@@ -172,7 +172,7 @@ class LocationHelperActivity : AppCompatActivity() {
                     location.latitude,
                     location.longitude,
                     1
-                )
+                )?.toList()?: listOf()
                 state = addresses[0].locality ?: ""
                 fullAddress = addresses[0].getAddressLine(0)
                 country =  if (addresses[0].countryName == null) {

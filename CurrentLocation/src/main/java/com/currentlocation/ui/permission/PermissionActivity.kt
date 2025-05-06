@@ -12,8 +12,8 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.currentlocation.R
 import com.currentlocation.ui.permission.bottom.BottomSheetAlertCLDialog
+import com.currentlocaton.R
 import java.util.*
 
 @TargetApi(Build.VERSION_CODES.M)

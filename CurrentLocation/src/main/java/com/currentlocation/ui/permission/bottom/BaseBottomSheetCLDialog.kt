@@ -1,7 +1,7 @@
 package com.currentlocation.ui.permission.bottom
 
 import android.content.Context
-import com.currentlocation.R
+import com.currentlocaton.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
